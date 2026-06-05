@@ -1,12 +1,13 @@
 {
   "name": "@gcb/fields",
-  "version": "0.0.0",
+  "version": "0.2.0",
   "description": "GCB typed-field controls, inspector renderer, and schema — decoupled from the WordPress plugin so any Gutenberg/headless editor can use them.",
   "license": "GPL-2.0-or-later",
-  "type": "module",
+  "//type": "Intentionally NOT \"type\": \"module\" — the source is ESM syntax consumed by the host's bundler (wp-scripts/webpack), which handles extensionless relative imports. Marking it a strict ESM module would force fully-specified .js extensions on every import.",
   "main": "./src/index.js",
   "exports": {
-    ".": "./src/index.js"
+    ".": "./src/index.js",
+    "./conditional-logic": "./src/conditional-logic.js"
   },
   "files": [
     "src"
