@@ -1,4 +1,4 @@
-# @gcb/fields
+# @wordpress-gcb/fields
 
 GCB's typed-field UI as a standalone package: the control components, the
 inspector renderer (`block.fields.json` → settings panel), and the
@@ -17,7 +17,7 @@ later step — see `EXTRACTION.md`.
 
 The plugin currently bakes the controls into itself and feeds them via
 `window.gcbLite` + plugin REST. That couples the field UI to the plugin. Pulling
-it into `@gcb/fields` means:
+it into `@wordpress-gcb/fields` means:
 
 - headless editors get the exact same controls without the plugin;
 - "eject" can scaffold a block that uses the SDK and works plugin-free;

@@ -43,7 +43,7 @@ explicit args):
 
 ## Wire the plugin to consume the package
 
-After the move, `gcb-lite` imports from `@gcb/fields` instead of `./controls`,
+After the move, `gcb-lite` imports from `@wordpress-gcb/fields` instead of `./controls`,
 and wraps its inspector in `<GcbFieldsProvider tokens=… media=… variant=…>` fed
 from the values it currently localises. Net behaviour identical — verify with the
 existing Jest suite (`inspector.test.js`, `validation.test.js`, etc.) and a manual
