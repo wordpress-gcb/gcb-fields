@@ -1,8 +1,23 @@
 {
   "name": "@wordpress-gcb/fields",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "GCB typed-field controls, inspector renderer, and schema — decoupled from the WordPress plugin so any Gutenberg/headless editor can use them.",
   "license": "GPL-2.0-or-later",
+  "homepage": "https://gutenbergcontrolblocks.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wordpress-gcb/gcb-fields.git"
+  },
+  "bugs": {
+    "url": "https://github.com/wordpress-gcb/gcb-fields/issues"
+  },
+  "keywords": [
+    "wordpress",
+    "gutenberg",
+    "block-editor",
+    "fields",
+    "gcb"
+  ],
   "//type": "Intentionally NOT \"type\": \"module\" — the source is ESM syntax consumed by the host's bundler (wp-scripts/webpack), which handles extensionless relative imports. Marking it a strict ESM module would force fully-specified .js extensions on every import.",
   "main": "./src/index.js",
   "exports": {
