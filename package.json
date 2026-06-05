@@ -1,6 +1,6 @@
 {
   "name": "@wordpress-gcb/fields",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "GCB typed-field controls, inspector renderer, and schema — decoupled from the WordPress plugin so any Gutenberg/headless editor can use them.",
   "license": "GPL-2.0-or-later",
   "homepage": "https://gutenbergcontrolblocks.com",
@@ -18,27 +18,29 @@
     "fields",
     "gcb"
   ],
-  "//type": "Intentionally NOT \"type\": \"module\" — the source is ESM syntax consumed by the host's bundler (wp-scripts/webpack), which handles extensionless relative imports. Marking it a strict ESM module would force fully-specified .js extensions on every import.",
-  "main": "./src/index.js",
+  "//build": "We PUBLISH compiled JS from dist/ (babel-transformed JSX), NOT raw src/. A published npm package shipping raw JSX breaks every consumer whose bundler excludes node_modules from babel (which is the default). src/ is the editable source; dist/ is what ships. Run `npm run build` before publishing — prepublishOnly enforces it.",
+  "main": "./dist/index.js",
   "exports": {
-    ".": "./src/index.js",
-    "./conditional-logic": "./src/conditional-logic.js"
+    ".": "./dist/index.js",
+    "./conditional-logic": "./dist/conditional-logic.js"
   },
   "files": [
-    "src"
+    "dist"
   ],
   "scripts": {
+    "build": "babel src --out-dir dist --copy-files",
+    "prepublishOnly": "npm run build",
     "test": "echo \"no tests yet\" && exit 0"
   },
   "//": "WordPress packages are provided by the host editor (externalised in wp-scripts builds) — peer deps, not bundled.",
   "peerDependencies": {
+    "@wordpress/api-fetch": ">=6",
+    "@wordpress/block-editor": ">=12",
+    "@wordpress/blocks": ">=12",
     "@wordpress/components": ">=27",
+    "@wordpress/data": ">=9",
     "@wordpress/element": ">=5",
     "@wordpress/i18n": ">=4",
-    "@wordpress/block-editor": ">=12",
-    "@wordpress/api-fetch": ">=6",
-    "@wordpress/blocks": ">=12",
-    "@wordpress/data": ">=9",
     "@wordpress/icons": ">=9"
   },
   "//deps": "Bundled because they are NOT part of the WordPress runtime: the rich-control libraries.",
@@ -46,9 +48,14 @@
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
-    "@tiptap/react": "^3.23.6",
-    "@tiptap/starter-kit": "^3.23.6",
+    "@tiptap/extension-image": "^3.23.6",
     "@tiptap/extension-link": "^3.23.6",
-    "@tiptap/extension-image": "^3.23.6"
+    "@tiptap/react": "^3.23.6",
+    "@tiptap/starter-kit": "^3.23.6"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.29.7",
+    "@babel/core": "^7.29.7",
+    "@wordpress/babel-preset-default": "^8.48.0"
   }
 }
