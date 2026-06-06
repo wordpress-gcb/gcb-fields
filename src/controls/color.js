@@ -150,6 +150,7 @@ function ColorFieldImpl({
 	showGradients = true,
 	className = '',
 	help,
+	tokenKeys,
 }) {
 	const themeColors = useSetting('color.palette');
 	const themeGradients = useSetting('color.gradients');
@@ -157,8 +158,14 @@ function ColorFieldImpl({
 	// Always end up with arrays — `useSetting('color.gradients')` returns
 	// undefined on themes that don't declare any gradients, and feeding that
 	// to <GradientPicker> crashes on `.orientation`.
-	const finalColors = (colors && colors.length ? colors : (themeColors || []));
+	let finalColors = (colors && colors.length ? colors : (themeColors || []));
 	const finalGradients = (gradients && gradients.length ? gradients : (themeGradients || []));
+
+	// When the field was built with a token subset (tokenKeys), restrict the
+	// palette to those theme colours by slug. Empty/absent = offer all.
+	if (Array.isArray(tokenKeys) && tokenKeys.length > 0) {
+		finalColors = finalColors.filter((c) => tokenKeys.includes(c.slug));
+	}
 
 	return (
 		<BaseControl
@@ -230,6 +237,7 @@ export default function ColorField({ control, value, onChange }) {
 			enableAlpha={control.enableAlpha !== false}
 			disableCustomColors={control.disableCustomColors === true}
 			disableCustomGradients={control.disableCustomGradients === true}
+			tokenKeys={control.tokenKeys}
 		/>
 	);
 }

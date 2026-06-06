@@ -14,6 +14,7 @@ import {
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
+import { useTokens, getTokensByGroup } from '../hooks/useTokens';
 
 const DEFAULT_PRESETS = [
 	{ label: 'None', value: 'none' },
@@ -24,21 +25,45 @@ const DEFAULT_PRESETS = [
 
 const PRESET_KEYS = new Set(['none', 'small', 'medium', 'large']);
 
+/**
+ * Build the toggle presets from the theme's spacing tokens when the field was
+ * configured with a token group (and optional checked subset). Falls back to
+ * the simple None/S/M/L presets when no tokens are configured.
+ */
+function tokenPresets(control, tokens) {
+	const group = control.tokenGroup;
+	if (!group || !tokens) return null;
+	let list = getTokensByGroup(tokens, group);
+	if (!Array.isArray(list) || list.length === 0) return null;
+	if (Array.isArray(control.tokenKeys) && control.tokenKeys.length > 0) {
+		list = list.filter((t) => control.tokenKeys.includes(t.slug || t.key));
+	}
+	if (list.length === 0) return null;
+	// Compact label (the slug or short name) — the value is the slug.
+	return list.map((t) => ({ label: t.name || t.label || t.slug || t.key, value: t.slug || t.key }));
+}
+
 function isValidCSSValue(input) {
 	if (!input) return true;
 	return /^(\d*\.?\d+)(px|rem|em|%|vw|vh|vmin|vmax)?$/.test(String(input).trim());
 }
 
 export default function SpacingField({ control, value, onChange }) {
+	const { tokens } = useTokens();
+
+	// Token-driven presets (from theme.json) take priority over the explicit
+	// `presets` config and the simple None/S/M/L fallback.
+	const presets = tokenPresets(control, tokens) || control.presets || DEFAULT_PRESETS;
+	const presetKeys = new Set(presets.map((p) => p.value));
+	const firstPreset = presets[0]?.value || 'medium';
+
 	// Decide if value is a preset or a custom string.
-	const isCustom = typeof value === 'string' && value !== '' && !PRESET_KEYS.has(value);
-	const presetValue = isCustom ? 'medium' : (value || 'medium');
+	const isCustom = typeof value === 'string' && value !== '' && !presetKeys.has(value);
+	const presetValue = isCustom ? firstPreset : (value || firstPreset);
 
 	const [showCustom, setShowCustom] = useState(isCustom);
 	const [customInput, setCustomInput] = useState(isCustom ? value : '');
 	const [error, setError] = useState(null);
-
-	const presets = control.presets || DEFAULT_PRESETS;
 
 	const handlePreset = (next) => {
 		setShowCustom(false);
@@ -54,14 +79,14 @@ export default function SpacingField({ control, value, onChange }) {
 			return;
 		}
 		setError(null);
-		onChange(next || 'medium');
+		onChange(next || firstPreset);
 	};
 
 	const handleReset = () => {
 		setShowCustom(false);
 		setCustomInput('');
 		setError(null);
-		onChange('medium');
+		onChange(firstPreset);
 	};
 
 	const displayHint = showCustom
