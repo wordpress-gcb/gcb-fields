@@ -151,6 +151,7 @@ function ColorFieldImpl({
 	className = '',
 	help,
 	tokenKeys,
+	tokenCustom,
 }) {
 	const themeColors = useSetting('color.palette');
 	const themeGradients = useSetting('color.gradients');
@@ -165,6 +166,15 @@ function ColorFieldImpl({
 	// palette to those theme colours by slug. Empty/absent = offer all.
 	if (Array.isArray(tokenKeys) && tokenKeys.length > 0) {
 		finalColors = finalColors.filter((c) => tokenKeys.includes(c.slug));
+	}
+
+	// Append any custom (non-token) colours the field declared, so the field
+	// isn't locked to theme tokens.
+	if (Array.isArray(tokenCustom) && tokenCustom.length > 0) {
+		finalColors = [
+			...finalColors,
+			...tokenCustom.map((c) => ({ name: c, slug: 'custom-' + c, color: c })),
+		];
 	}
 
 	return (
@@ -238,6 +248,7 @@ export default function ColorField({ control, value, onChange }) {
 			disableCustomColors={control.disableCustomColors === true}
 			disableCustomGradients={control.disableCustomGradients === true}
 			tokenKeys={control.tokenKeys}
+			tokenCustom={control.tokenCustom}
 		/>
 	);
 }
